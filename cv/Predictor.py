@@ -7,6 +7,7 @@ import cv2
 import time
 
 class constants:
+	DATA_PATH="../data"
 	LANDMARK_TRAINING_SET = "shape_predictor_68_face_landmarks.dat"
 	SAMPLE_IMAGE = "closed.jpg"
 
@@ -40,7 +41,7 @@ class algorithms:
 	# initialize dlib's face detector (HOG-based) and then create
 	# the facial landmark predictor
 	detector = dlib.get_frontal_face_detector()
-	predictor = dlib.shape_predictor(constants.LANDMARK_TRAINING_SET)
+	predictor = dlib.shape_predictor(constants.DATA_PATH+"/"+constants.LANDMARK_TRAINING_SET)
 	@staticmethod
 	def getFacePoints(img,debug=False):
 		# my own sort of 'fork' of this website's code https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python
