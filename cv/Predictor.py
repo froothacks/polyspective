@@ -8,6 +8,7 @@ import time
 
 class constants:
     DATA_PATH="../data"
+    TEST_PATH=DATA_PATH+"/test_data"
     LANDMARK_TRAINING_SET = "shape_predictor_68_face_landmarks.dat"
 
 class utils:
@@ -73,6 +74,18 @@ class algorithms:
     @staticmethod
     def getMouthOpen(innerMouth,debug=False):
         pass
+def runDiagnostic():
+    algorithms.init()
+    image = cv2.imread(constants.TEST_PATH+"/cw.jpg")
+    t = time.time()
+    image = imutils.resize(image, width=200)
+    landmarks = algorithms.getFacePoints(image)
+    diff = time.time() - t
+    FPS = 30
+    GOAL_TIME = 0.5
+    # sgg is the suggested interval for frame grabbing
+    sgg = int((diff*FPS)/GOAL_TIME)
+    return sgg
 def main(debug=False):
     algorithms.init()
     if debug:
@@ -96,5 +109,9 @@ def main(debug=False):
         image = imutils.resize(image, width=500)
         cv2.imshow("",image)
         cv2.waitKey(0)
+def test():
+    interval = runDiagnostic()
+    print(interval)
 if __name__ == '__main__':
-    main(debug=True)
+    #main(debug=True)
+    test()
