@@ -1,19 +1,26 @@
 import cv2
 import imutils
 
-cap = cv2.VideoCapture('video.mp4')
+from cv.Predictor import algorithms, utils
+
+cap = cv2.VideoCapture('../data/video.mp4')
 
 while (cap.isOpened()):
     ret, frame = cap.read()
+    algorithms.init()
     while (cap.isOpened()):
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         resized_gray = imutils.resize(gray, width=500)
         cv2.imshow('frame', resized_gray)
         resized_color = imutils.resize(frame, width=500)
-        cv2.imshow('color', resized_color)
+        landmarks = algorithms.getFacePoints(resized_color)
+        mouth = utils.getMouthPoints(landmarks)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        for coords in mouth["outer_lips"]:
+            cv2.circle(resized_color, (coords[0, 0], coords[0, 1]), 1, (255, 0, 0), thickness=-1)
+    cv2.imshow('color', resized_color)
+    if cv2.waitKey(1000) & 0xFF == ord('q'):
+        break
 
-    cap.release()
+cap.release()
