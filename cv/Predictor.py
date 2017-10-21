@@ -75,7 +75,6 @@ class algorithms:
     def getMouthOpen(innerMouth,debug=False):
         pass
 def runDiagnostic():
-    algorithms.init()
     image = cv2.imread(constants.TEST_PATH+"/cw.jpg")
     t = time.time()
     image = imutils.resize(image, width=200)
