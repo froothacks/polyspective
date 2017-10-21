@@ -1,0 +1,16 @@
+/local
+
+.env
+
+.git
+*.DS_Store
+
+### Python ###
+__pycache__/
+*.py[cdo]
+
+### Node ###
+logs
+npm-debug.log*
+node_modules/
+.module-cache
