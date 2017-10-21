@@ -68,9 +68,17 @@ class algorithms:
         # detect faces in the grayscale image
         rects = algorithms.detector(gray, 1)
         if len(rects) < 1:
-            return None
+            print("none")
+            return []
         if debug: print("Finished. %s seconds elapsed" % str(time.time()-t) )
-        return np.matrix([[p.x, p.y] for p in algorithms.predictor(gray, rects[0]).parts()])
+        face_set = []
+        for rect in rects:
+            face_set.append(
+                np.matrix([
+                    [p.x, p.y] for p in algorithms.predictor(gray, rect).parts()
+                ])
+            )
+        return face_set
     @staticmethod
     def getMouthOpen(innerMouth,debug=False):
         pass
@@ -85,32 +93,29 @@ def runDiagnostic():
     # sgg is the suggested interval for frame grabbing
     sgg = int((diff*FPS)/GOAL_TIME)
     return sgg
+def getMouthsFromFaceSet(landmarks):
+    s = []
+    print(len(landmarks))
+    for i in landmarks:
+        s.append(utils.getMouthPoints(i))
+    return s
+def getTestingImage(img):
+    img = imutils.resize(img,width=200)
+    face_set = algorithms.getFacePoints(img)
+    mouths = getMouthsFromFaceSet(face_set)
+    for mouth in mouths:
+        for coords in mouth["inner_lips"]:
+            cv2.circle(img, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
+    return img
 def main(debug=False):
     algorithms.init()
     if debug:
         print("Running...")
         t = time.time()
-    image = cv2.imread(constants.DATA_PATH+"/faces/open/1.jpg")
-    # scale down
-    image = imutils.resize(image, width=200)
-    landmarks = algorithms.getFacePoints(image)
-    if landmarks == None:
-        print("No faces found!")
-        return
-    if debug: print("Finished. %s seconds elapsed." % str(time.time()-t))
-    mouth = utils.getMouthPoints(landmarks)
-    if debug:
-        for coords in mouth["inner_lips"]:
-            cv2.circle(image, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
-        #for coords in mouth["outer_lips"]:
-        #    cv2.circle(image, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
-        # scale up for testing
-        image = imutils.resize(image, width=500)
-        cv2.imshow("",image)
-        cv2.waitKey(0)
-def test():
-    interval = runDiagnostic()
-    print(interval)
+    image = cv2.imread(constants.DATA_PATH+"/test_data/cw.jpg")
+    img = getTestingImage(image)
+    cv2.imshow("",img)
+    cv2.waitKey(0)
 if __name__ == '__main__':
     #main(debug=True)
-    test()
+    main()
