@@ -38,8 +38,8 @@ class utils:
     @staticmethod
     def getMouthPoints(landmarks):
         mouth = {
-            "inner_lips" : landmarks[49-1:60+1],
-            "outer_lips" : landmarks[61-1:68+1],
+            "outer_lips" : landmarks[49-1:60+1],
+            "inner_lips" : landmarks[61-1:68+1],
         }
         return mouth
 
@@ -66,6 +66,8 @@ class algorithms:
         if debug: print("Detecting faces...");t = time.time()
         # detect faces in the grayscale image
         rects = algorithms.detector(gray, 1)
+        if len(rects) < 1:
+            return None
         if debug: print("Finished. %s seconds elapsed" % str(time.time()-t) )
         return np.matrix([[p.x, p.y] for p in algorithms.predictor(gray, rects[0]).parts()])
     @staticmethod
@@ -76,14 +78,17 @@ def main(debug=False):
     if debug:
         print("Running...")
         t = time.time()
-    image = cv2.imread("open.jpg")
+    image = cv2.imread(constants.DATA_PATH+"/faces/open/1.jpg")
     # scale down
     image = imutils.resize(image, width=200)
     landmarks = algorithms.getFacePoints(image)
+    if landmarks == None:
+        print("No faces found!")
+        return
     if debug: print("Finished. %s seconds elapsed." % str(time.time()-t))
     mouth = utils.getMouthPoints(landmarks)
     if debug:
-        for coords in mouth["outer_lips"]:
+        for coords in mouth["inner_lips"]:
             cv2.circle(image, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
         #for coords in mouth["outer_lips"]:
         #    cv2.circle(image, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
