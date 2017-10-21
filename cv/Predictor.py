@@ -68,7 +68,7 @@ class algorithms:
         # detect faces in the grayscale image
         rects = algorithms.detector(gray, 1)
         if len(rects) < 1:
-            print("none")
+            ##print("none")
             return []
         if debug: print("Finished. %s seconds elapsed" % str(time.time()-t) )
         face_set = []
@@ -85,7 +85,7 @@ class algorithms:
 def runDiagnostic():
     image = cv2.imread(constants.TEST_PATH+"/cw.jpg")
     t = time.time()
-    image = imutils.resize(image, width=200)
+    image = imutils.resize(image, width=500)
     landmarks = algorithms.getFacePoints(image)
     diff = time.time() - t
     FPS = 30
@@ -95,12 +95,12 @@ def runDiagnostic():
     return sgg
 def getMouthsFromFaceSet(landmarks):
     s = []
-    print(len(landmarks))
+    ##print(len(landmarks))
     for i in landmarks:
         s.append(utils.getMouthPoints(i))
     return s
 def getTestingImage(img):
-    img = imutils.resize(img,width=200)
+    img = imutils.resize(img,width=500)
     face_set = algorithms.getFacePoints(img)
     mouths = getMouthsFromFaceSet(face_set)
     for mouth in mouths:
