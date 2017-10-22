@@ -1,3 +1,4 @@
+import random
 
 from imutils import face_utils
 import numpy as np
@@ -128,25 +129,31 @@ def runDiagnostic():
     # sgg is the suggested interval for frame grabbing
     sgg = int((diff*FPS)/GOAL_TIME)
     return sgg
+
 def getMouthsFromFaceSet(landmarks):
     s = []
     ##print(len(landmarks))
     for i in landmarks:
         s.append(utils.getMouthPoints(i))
     return s
+
+
 def getTestingImage(img):
     img = imutils.resize(img,width=constants.RESISZE_WIDTH)
     face_set = algorithms.getFacePoints(img)
     font = cv2.FONT_HERSHEY_PLAIN
     ypos = 100
+
     for fs in face_set:
+        R = random.randint(0, 255)
+        G = random.randint(0, 255)
+        B = random.randint(0, 255)
         mouth_score = algorithms.getMouthOpen(fs)
-        cv2.putText(img, str(mouth_score), (100, ypos), font, 1, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(img, "MS: "+str(mouth_score), (100, ypos), font, 1, (R,G,B), 1, cv2.LINE_AA)
         ypos+=20
-    mouths = getMouthsFromFaceSet(face_set)
-    for fs in face_set:
         for coords in fs:
-            cv2.circle(img, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
+            cv2.circle(img, (coords[0,0], coords[0,1]), 1, (R,G,B), thickness=-1)
+
     return img
 def main(debug=False):
     algorithms.init()
