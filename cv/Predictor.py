@@ -131,6 +131,7 @@ class Predictor(object):
     """The public class for use in the main program."""
     def __init__(self):
         Algorithms.init()
+        self.score_past = []
     def next(self,frames):
         scores = [0.0]*len(frames)
         for place,frame in enumerate(frames):
@@ -152,4 +153,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    pass
