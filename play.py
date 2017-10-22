@@ -45,8 +45,11 @@ while (1):
         ret1 = p1.next(frames)
         ret2 = p2.next(frames)
         if ret2 == []:
-            ret2 = [0, 0, 0]
-        ret = ret2
+            ret2 = [0] * len(cameras)
+        ret = [0] * len(cameras)
+        for i in range(0, len(cameras)):
+            ret[i] = 0.7 * ret1[i] + 0.3 * ret2[i]
+        # ret = ret2
         if max(ret) == 0:
             print("ZERO")
             cv2.imshow("stream", frames[lastf])
