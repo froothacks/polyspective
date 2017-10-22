@@ -46,10 +46,11 @@ while (1):
         print(ret.index(max(ret)))
         #mouths = predictor.getTestingImage(f)
         #mouths2 = predictor.getTestingImage(fl)
-##    if cv2.waitKey(1) & 0xFF == ord('q'):
-##        break
+    
     else:
         cv2.imshow("stream", fs[lastf])
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
     #cv2.imshow('color', mouths)
     #cv2.imshow('color2', mouths2)
 
