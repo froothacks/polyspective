@@ -1,7 +1,6 @@
 import cv2
-import imutils
 
-import Predictor as Predictor
+from cv import Predictor
 
 cap = cv2.VideoCapture('../data/James.mp4')
 # cap = cv2.VideoCapture(0)
