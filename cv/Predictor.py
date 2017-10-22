@@ -122,9 +122,10 @@ def getMouthsFromFaceSet(landmarks):
 def getTestingImage(img):
     img = imutils.resize(img,width=500)
     face_set = algorithms.getFacePoints(img)
-    mouth_score = algorithms.getMouthOpen(face_set[0])
     font = cv2.FONT_HERSHEY_PLAIN
-    cv2.putText(img, str(mouth_score), (100, 100), font, 2, (0, 0, 255), 2, cv2.LINE_AA)
+    for fs in face_set:
+        mouth_score = algorithms.getMouthOpen(fs)
+        cv2.putText(img, str(mouth_score), (100, 100), font, 1, (0, 0, 255), 1, cv2.LINE_AA)
     mouths = getMouthsFromFaceSet(face_set)
     for mouth in mouths:
         for coords in mouth["inner_lips"]:
