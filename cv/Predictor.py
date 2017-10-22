@@ -104,11 +104,10 @@ def getTestingImage(img):
     face_set = Algorithms.getFacePoints(img)
     font = cv2.FONT_HERSHEY_PLAIN
     ypos = 100
-
-    for fs in face_set:
-        R = random.randint(0, 255)
-        G = random.randint(0, 255)
-        B = random.randint(0, 255)
+    def r(a):return (255+(1 - 2*random.randint(0,1))*(a*50))%255
+    colors = [(r(i),r(i),r(i)) for i in range(len(face_set))]
+    for place,fs in enumerate(face_set):
+        R,G,B = colors[place]
         mouth_score = Algorithms.getMouthOpen(fs)
         cv2.putText(img, "MS: " + str(mouth_score), (100, ypos), font, 1, (R, G, B), 1, cv2.LINE_AA)
         ypos += 20
