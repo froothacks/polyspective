@@ -1,13 +1,13 @@
 import cv2
 
-from cv import Predictor
+import predictor
 
 cap = cv2.VideoCapture('../data/James.mp4')
 # cap = cv2.VideoCapture(0)
 
 # will change this later to just Predictor.init() when Calder updates code
-Predictor.algorithms.init()
-frame_interval = Predictor.runDiagnostic()
+predictor.Algorithms.init()
+frame_interval = predictor.runDiagnostic()
 
 while (cap.isOpened()):
     ret, frame = cap.read()
@@ -19,8 +19,8 @@ while (cap.isOpened()):
         # resized_gray = imutils.resize(gray, width=500)
         # cv2.imshow('frame', resized_gray)
         counter += 1
-        if counter == 1:
-            mouths = Predictor.getTestingImage(frame)
+        if counter == int(frame_interval/2):
+            mouths = predictor.getTestingImage(frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             counter = 0
