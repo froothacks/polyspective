@@ -5,6 +5,7 @@ import imutils
 import dlib
 import cv2
 import time
+import math
 
 class constants:
     DATA_PATH="../data"
@@ -12,7 +13,7 @@ class constants:
     LANDMARK_TRAINING_SET = "shape_predictor_68_face_landmarks.dat"
     FULLY_OPEN = 0.914772727275
     FULLY_CLOSED = 0.0824213743466
-
+    RESISZE_WIDTH=350
 
 class utils:
     @staticmethod
@@ -96,16 +97,30 @@ class algorithms:
         lb = abs((base_left[0,1]  - bottom_left[0,1])  / (base_left[0,0]  - bottom_left[0,0]) )
         rt = abs((base_right[0,1] - top_right[0,1])    / (base_right[0,0] - top_right[0,0])   )
         rb = abs((base_right[0,1] - bottom_right[0,1]) / (base_right[0,0] - bottom_right[0,0]))
+        # substact the face's slope from each slope
+        face_slope = abs(algorithms.getFaceSlope(landmarks))
+        lt-=face_slope
+        lb-=face_slope
+        rt-=face_slope
+        rb-=face_slope
         # think of this constants.FULLY_OPEN like a "perfect score" (100%)
         # divide the average of the by constants.FULLY_OPEN to become a score from 0.0 - 1.0
         # (think of it like 0% to 100%)
         score = max(((lt+lb+rt+rb)/4)-constants.FULLY_CLOSED,0)/constants.FULLY_OPEN
         return score
+    @staticmethod
+    def d2_distance(x1,y1,x2,y2): return math.sqrt((x1-x2)**2 + (y1-y2)**2)
+    @staticmethod
+    def getFaceSlope(landmarks):
+        """Using 2 points for 2 eyes, and sohcahtoa this finds the tilt of the face."""
+        # act as if the point is a point on the center's circumference
+        a,b = landmarks[40-1],landmarks[43-1]
+        return (a[0,1]-b[0,1])/(a[0,0]-b[0,1])
 
 def runDiagnostic():
     image = cv2.imread(constants.TEST_PATH+"/cw.jpg")
     t = time.time()
-    image = imutils.resize(image, width=500)
+    image = imutils.resize(image, width=constants.RESISZE_WIDTH)
     landmarks = algorithms.getFacePoints(image)
     diff = time.time() - t
     FPS = 30
@@ -120,17 +135,17 @@ def getMouthsFromFaceSet(landmarks):
         s.append(utils.getMouthPoints(i))
     return s
 def getTestingImage(img):
-    img = imutils.resize(img,width=500)
+    img = imutils.resize(img,width=constants.RESISZE_WIDTH)
     face_set = algorithms.getFacePoints(img)
     font = cv2.FONT_HERSHEY_PLAIN
     ypos = 100
     for fs in face_set:
         mouth_score = algorithms.getMouthOpen(fs)
-        cv2.putText(img, str(mouth_score), (100, ypos), font, 1, (0, 0, 255), 1, cv2.LINE_AA)
-        ypos+=100
+        cv2.putText(img, str(mouth_score), (100, ypos), font, 1, (0, 255, 255), 1, cv2.LINE_AA)
+        ypos+=20
     mouths = getMouthsFromFaceSet(face_set)
-    for mouth in mouths:
-        for coords in mouth["inner_lips"]:
+    for fs in face_set:
+        for coords in fs:
             cv2.circle(img, (coords[0,0], coords[0,1]), 1, (255, 0, 0), thickness=-1)
     return img
 def main(debug=False):

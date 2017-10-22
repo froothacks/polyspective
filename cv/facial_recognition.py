@@ -23,7 +23,7 @@ while (cap.isOpened()):
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             counter = 0
-            cv2.imshow('color', imutils.resize(mouths, width=500))
+            cv2.imshow('color', mouths)
 
 
 
