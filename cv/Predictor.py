@@ -62,10 +62,10 @@ class Algorithms:
         top_right = landmarks[64 - 1]
         bottom_right = landmarks[66 - 1]
         # calculating slopes
-        lt = abs((base_left[0, 1] - top_left[0, 1]) / (base_left[0, 0] - top_left[0, 0]))
-        lb = abs((base_left[0, 1] - bottom_left[0, 1]) / (base_left[0, 0] - bottom_left[0, 0]))
-        rt = abs((base_right[0, 1] - top_right[0, 1]) / (base_right[0, 0] - top_right[0, 0]))
-        rb = abs((base_right[0, 1] - bottom_right[0, 1]) / (base_right[0, 0] - bottom_right[0, 0]))
+        lt = min(abs((base_left[0, 1] - top_left[0, 1]) / (base_left[0, 0] - top_left[0, 0])),1)
+        lb = min(abs((base_left[0, 1] - bottom_left[0, 1]) / (base_left[0, 0] - bottom_left[0, 0])),1)
+        rt = min(abs((base_right[0, 1] - top_right[0, 1]) / (base_right[0, 0] - top_right[0, 0])),1)
+        rb = min(abs((base_right[0, 1] - bottom_right[0, 1]) / (base_right[0, 0] - bottom_right[0, 0])),1)
         # substact the face's slope from each slope
         face_slope = abs(Algorithms.getFaceSlope(landmarks))
         lt -= face_slope
