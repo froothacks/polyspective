@@ -1,12 +1,9 @@
+from numpy import matrix as np_matrix
+import time
 import random
-
-from imutils import face_utils
-import numpy as np
 import imutils
 import dlib
 import cv2
-import time
-import math
 
 
 class Constants:
@@ -49,7 +46,7 @@ class Algorithms:
         face_set = []
         for rect in rects:
             face_set.append(
-                np.matrix([
+                np_matrix([
                     [p.x, p.y] for p in Algorithms.predictor(gray, rect).parts()
                 ])
             )
@@ -124,23 +121,35 @@ class Face():
     def __init__(self,img):
         """A class to score a face."""
         self.landmarks = Algorithms.getFacePoints(img)
-        if len(self.landmarks > 1):
+        if len(self.landmarks) > 1:
             print("Warning! More than 1 face found.")
     def get_mouth_score(self,landmark_index):
         """Calder's function to return a score from 0.0. to 1.0 on how open the face's mouth is."""
         return Algorithms.getMouthOpen(self.landmarks[landmark_index])
 
-
-def main(debug=False):
-    Algorithms.init()
-    if debug:
-        print("Running...")
-        t = time.time()
-    image = cv2.imread(Constants.DATA_PATH + "/test_data/cw2.jpg")
-    img = getTestingImage(image)
-    cv2.imshow("", img)
-    cv2.waitKey(0)
+## THIS IS THE PUBLICLY USED FUNCTION
+class Predictor(object):
+    """The public class for use in the main program."""
+    def __init__(self):
+        Algorithms.init()
+    def next(self,frames):
+        scores = []
+        for frame in frames:
+            f = Face(frame)
+            scores.append(f.get_mouth_score(0))
+        return scores
+def main():
+    print("Loading...")
+    im = cv2.imread(Constants.DATA_PATH + "/test_data/cw.jpg")
+    im2 = cv2.imread(Constants.DATA_PATH + "/test_data/cw2.jpg")
+    ##img = getTestingImage(image)
+    ##cv2.imshow("", img)
+    ##cv2.waitKey(0)
+    p = Predictor()
+    print("Running...")
+    print(p.next([im,im2]))
 
 
 if __name__ == '__main__':
-    main(debug=True)
+    main()
+    pass
