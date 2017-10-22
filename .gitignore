@@ -1,4 +1,5 @@
-/local
+data/
+local/
 
 .env
 
@@ -17,3 +18,10 @@ node_modules/
 
 ### IntelliJ ###
 .idea/
+
+<<<<<<< HEAD
+### Sublime Text ###
+*.sublime-*
+=======
+Thumbs.db
+>>>>>>> 15c6770d794f02603783ed489efcf34c1ca360ea
