@@ -10,6 +10,9 @@ class constants:
     DATA_PATH="../data"
     TEST_PATH=DATA_PATH+"/test_data"
     LANDMARK_TRAINING_SET = "shape_predictor_68_face_landmarks.dat"
+    FULLY_OPEN = 0.914772727275
+    FULLY_CLOSED = 0.0824213743466
+
 
 class utils:
     @staticmethod
@@ -39,8 +42,8 @@ class utils:
     @staticmethod
     def getMouthPoints(landmarks):
         mouth = {
-            "outer_lips" : landmarks[49-1:60+1],
-            "inner_lips" : landmarks[61-1:68+1],
+            "outer_lips" : landmarks[49-1:60+1-1],
+            "inner_lips" : landmarks[61-1:68+1-1],
         }
         return mouth
 
@@ -80,8 +83,25 @@ class algorithms:
             )
         return face_set
     @staticmethod
-    def getMouthOpen(innerMouth,debug=False):
-        pass
+    def getMouthOpen(landmarks,debug=False):
+        # locating all the points from our list of landmarks
+        base_left = landmarks[61-1] # inner mouth, far left
+        base_right = landmarks[65-1] # inner mouth, far right
+        top_left = landmarks[62-1]
+        bottom_left = landmarks[68-1]
+        top_right = landmarks[64-1]
+        bottom_right = landmarks[66-1]
+        # calculating slopes
+        lt = abs((base_left[0,1]  - top_left[0,1])     / (base_left[0,0]  - top_left[0,0])    )
+        lb = abs((base_left[0,1]  - bottom_left[0,1])  / (base_left[0,0]  - bottom_left[0,0]) )
+        rt = abs((base_right[0,1] - top_right[0,1])    / (base_right[0,0] - top_right[0,0])   )
+        rb = abs((base_right[0,1] - bottom_right[0,1]) / (base_right[0,0] - bottom_right[0,0]))
+        # think of this constants.FULLY_OPEN like a "perfect score" (100%)
+        # divide the average of the by constants.FULLY_OPEN to become a score from 0.0 - 1.0
+        # (think of it like 0% to 100%)
+        score = max(((lt+lb+rt+rb)/4)-constants.FULLY_CLOSED,0)/constants.FULLY_OPEN
+        return score
+
 def runDiagnostic():
     image = cv2.imread(constants.TEST_PATH+"/cw.jpg")
     t = time.time()
@@ -102,6 +122,9 @@ def getMouthsFromFaceSet(landmarks):
 def getTestingImage(img):
     img = imutils.resize(img,width=500)
     face_set = algorithms.getFacePoints(img)
+    mouth_score = algorithms.getMouthOpen(face_set[0])
+    font = cv2.FONT_HERSHEY_PLAIN
+    cv2.putText(img, str(mouth_score), (100, 100), font, 2, (0, 0, 255), 2, cv2.LINE_AA)
     mouths = getMouthsFromFaceSet(face_set)
     for mouth in mouths:
         for coords in mouth["inner_lips"]:
@@ -112,10 +135,9 @@ def main(debug=False):
     if debug:
         print("Running...")
         t = time.time()
-    image = cv2.imread(constants.DATA_PATH+"/test_data/cw.jpg")
+    image = cv2.imread(constants.DATA_PATH+"/test_data/cw2.jpg")
     img = getTestingImage(image)
     cv2.imshow("",img)
     cv2.waitKey(0)
 if __name__ == '__main__':
-    #main(debug=True)
-    main()
+    main(debug=True)

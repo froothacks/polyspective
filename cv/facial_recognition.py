@@ -1,7 +1,7 @@
 import cv2
 import imutils
 
-import cv.Predictor as Predictor
+import Predictor as Predictor
 
 cap = cv2.VideoCapture('../data/James.mp4')
 # will change this later to just Predictor.init() when Calder updates code
